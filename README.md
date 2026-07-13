@@ -15,24 +15,29 @@ Aplicação web estática feita com **Vite** (JS puro), pronta para publicar no
    o identificador central: quem usar o mesmo nome entra no mesmo radar, então
    várias duplas podem brincar em radares diferentes ao mesmo tempo.
 2. Escolha uma das opções:
-   - **🎧 Usar radar** — abre a tela do ouvinte, com o pulso visual e o som dos
-     apitos. Essa pessoa só escuta/observa; o nível é definido pela outra.
+   - **🎧 Usar radar** — abre a tela do ouvinte. A intensidade é comunicada só
+     pelo **som dos apitos** e por um **círculo preenchido que cresce** dentro do
+     núcleo do radar (sem mostrar o número nem o nome do nível). Essa pessoa só
+     escuta/observa; o nível é definido pela outra.
    - **🎚️ Controlar radar** — abre a tela do controlador, que escolhe o nível.
 
 O ouvinte precisa **tocar uma vez** na tela ("Ativar radar") para liberar o áudio
 — exigência das políticas de autoplay dos navegadores.
 
-### Os 5 níveis
+### Os 6 níveis
 
-| Nível | Nome     | Comportamento                                   |
-| ----- | -------- | ----------------------------------------------- |
-| 1     | Silêncio | Radar em repouso, sem apitos.                   |
-| 2     | Lento    | Apitos espaçados.                               |
-| 3     | Médio    | Apitos sequenciais moderados.                   |
-| 4     | Rápido   | Apitos rápidos.                                 |
-| 5     | Contínuo | Apito contínuo, sem pausa.                      |
+| Nível | Nome         | Comportamento                          |
+| ----- | ------------ | -------------------------------------- |
+| 1     | Silêncio     | Radar em repouso, sem apitos.          |
+| 2     | Lento        | Apitos espaçados.                      |
+| 3     | Moderado     | Apitos sequenciais moderados.          |
+| 4     | Rápido       | Apitos rápidos.                        |
+| 5     | Muito rápido | Apitos muito rápidos.                  |
+| 6     | Contínuo     | Apito contínuo, sem pausa.             |
 
-O som é gerado pela **Web Audio API** (osciladores), sem arquivos de áudio.
+O som é gerado pela **Web Audio API** (osciladores), sem arquivos de áudio. No
+ouvinte, o círculo vai de um ponto pequeno (silêncio) até preencher todo o núcleo
+(contínuo).
 
 ## Sincronização em tempo real (por que MQTT)
 

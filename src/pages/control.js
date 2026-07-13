@@ -115,7 +115,7 @@ export function renderControl(app, radarName) {
   function onKey(e) {
     if (e.key === 'ArrowUp' || e.key === 'ArrowRight') setLevel(current + 1);
     else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') setLevel(current - 1);
-    else if (e.key >= '1' && e.key <= '5') setLevel(Number(e.key));
+    else if (e.key >= '1' && e.key <= '6') setLevel(Number(e.key));
   }
 
   sync.onStatus = (s) => applyStatus(statusEl, s);
