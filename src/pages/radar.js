@@ -2,7 +2,7 @@ import { navigate } from '../router.js';
 import { RadarSync } from '../radar-sync.js';
 import { BeepEngine } from '../audio.js';
 import { applyStatus } from './status.js';
-import { LEVELS, LEVEL_COLORS } from '../levels.js';
+import { LEVELS, LEVEL_COLORS, MAX_LEVEL } from '../levels.js';
 
 // Tela do ouvinte: escuta os apitos e ve o pulso do radar controlado por outra pessoa.
 export function renderRadar(app, radarName) {
@@ -26,8 +26,7 @@ export function renderRadar(app, radarName) {
           <span class="radar-cross radar-cross--v"></span>
           <span class="radar-sweep"></span>
           <div class="radar-core" id="core">
-            <span class="radar-core__level" id="core-level">1</span>
-            <span class="radar-core__name" id="core-name">Aguardando controlador...</span>
+            <span class="radar-core__fill" id="core-fill"></span>
           </div>
         </div>
       </div>
@@ -51,15 +50,10 @@ export function renderRadar(app, radarName) {
   const screen = app.querySelector('#radar-screen');
   const stage = app.querySelector('#stage');
   const grid = app.querySelector('#grid');
-  const core = app.querySelector('#core');
-  const coreLevel = app.querySelector('#core-level');
-  const coreName = app.querySelector('#core-name');
+  const coreFill = app.querySelector('#core-fill');
   const caption = app.querySelector('#caption');
   const statusEl = app.querySelector('#status');
   const overlay = app.querySelector('#overlay');
-
-  let hasSignal = false;
-  let currentLevel = 1;
 
   // Cada apito gera um anel expandindo a partir do centro.
   engine.onBeep = () => spawnRing(grid);
@@ -68,19 +62,18 @@ export function renderRadar(app, radarName) {
   };
 
   function applyLevel(level) {
-    currentLevel = level;
     const lvl = LEVELS[level];
     const accent = LEVEL_COLORS[level];
     screen.style.setProperty('--accent', accent);
-    coreLevel.textContent = level;
-    coreName.textContent = lvl.name;
-    caption.textContent = `Nivel ${level} — ${lvl.desc}`;
+    // A intensidade e comunicada apenas pelo tamanho do circulo preenchido
+    // (dentro do nucleo) e pelo som -- sem numero nem palavra na tela.
+    coreFill.style.setProperty('--fill', (level / MAX_LEVEL).toFixed(3));
+    caption.textContent = '';
     stage.classList.toggle('is-silent', lvl.kind === 'silent');
     engine.setLevel(level);
   }
 
   sync.onLevel = (level) => {
-    hasSignal = true;
     applyLevel(level);
   };
   sync.onStatus = (s) => applyStatus(statusEl, s);
@@ -90,15 +83,13 @@ export function renderRadar(app, radarName) {
   async function start() {
     await engine.unlock();
     overlay.classList.add('is-hidden');
-    if (!hasSignal) {
-      coreName.textContent = 'Aguardando controlador...';
-    }
   }
   app.querySelector('#btn-start').addEventListener('click', start);
   app.querySelector('#btn-back').addEventListener('click', () => navigate('/'));
 
-  // Estado inicial (visual) enquanto nao chega sinal.
+  // Estado inicial (visual) enquanto nao chega sinal: silencio, circulo minimo.
   stage.classList.add('is-silent');
+  coreFill.style.setProperty('--fill', (1 / MAX_LEVEL).toFixed(3));
 
   return () => {
     engine.stop();
